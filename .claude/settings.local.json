@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit",
+      "Write",
+      "PowerShell(*)",
+      "PowerShell(git *)"
+    ],
+    "deny": [
+      "PowerShell(*Remove-Item*)",
+      "PowerShell(*rm *)",
+      "PowerShell(* -rf *)",
+      "PowerShell(*rmdir*)",
+      "PowerShell(*rd /*)",
+      "PowerShell(*del *)"
+    ]
+  }
+}

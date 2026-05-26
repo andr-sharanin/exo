@@ -1,0 +1,148 @@
+{
+  "realm": "exocortex",
+  "enabled": true,
+  "displayName": "ExoCortex",
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 5,
+  "waitIncrementSeconds": 60,
+  "accessTokenLifespan": 900,
+  "accessTokenLifespanForImplicitFlow": 900,
+  "ssoSessionMaxLifespan": 2592000,
+  "ssoSessionIdleTimeout": 1800,
+  "offlineSessionMaxLifespan": 5184000,
+  "passwordPolicy": "length(8) and upperCase(1) and digits(1) and notUsername",
+  "eventsEnabled": true,
+  "eventsExpiration": 2592000,
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "Standard user — access to own data",
+        "composite": false
+      },
+      {
+        "name": "admin",
+        "description": "Tenant administrator — full access within own tenant",
+        "composite": false
+      },
+      {
+        "name": "system_admin",
+        "description": "System administrator — cross-tenant access, Admin UI, API key management",
+        "composite": false
+      },
+      {
+        "name": "tenant_admin",
+        "description": "Tenant administrator — manages own tenant users",
+        "composite": false
+      },
+      {
+        "name": "viewer",
+        "description": "Read-only access",
+        "composite": false
+      }
+    ]
+  },
+  "defaultRoles": ["user"],
+  "clients": [
+    {
+      "clientId": "exocortex-frontend",
+      "name": "ExoCortex Frontend",
+      "description": "Next.js server-side client — confidential, used by NextAuth.js",
+      "enabled": true,
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "CHANGE_ME_frontend_secret_rotate_after_first_login",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "https://*.exocortex.app/*",
+        "https://exo.continoom.com/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "https://*.exocortex.app",
+        "https://exo.continoom.com"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:3000/* https://exo.continoom.com/*",
+        "backchannel.logout.session.required": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "exocortex-mobile",
+      "name": "ExoCortex Mobile",
+      "description": "React Native Android application — public client with PKCE",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "exocortex://auth/*",
+        "exp://localhost:19000/*",
+        "http://localhost:19006/*"
+      ],
+      "webOrigins": [],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "exocortex-api",
+      "name": "ExoCortex API",
+      "description": "Backend FastAPI — bearer-only token validation",
+      "enabled": true,
+      "bearerOnly": true,
+      "publicClient": false,
+      "standardFlowEnabled": false
+    }
+  ],
+  "smtpServer": {},
+  "internationalizationEnabled": false,
+  "supportedLocales": ["en", "ru"],
+  "defaultLocale": "en"
+}

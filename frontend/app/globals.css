@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+  --worm-green: #22c55e;
+  --worm-red: #ef4444;
+  --worm-orange: #f97316;
+  --energy-sufficient: #22c55e;
+  --energy-constrained: #f59e0b;
+  --energy-critical: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* LifeWorm circle animation */
+@keyframes worm-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.worm-head {
+  animation: worm-pulse 1.5s ease-in-out infinite;
+}

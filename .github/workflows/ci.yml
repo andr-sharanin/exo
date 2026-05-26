@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Lint + Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: exocortex
+          POSTGRES_USER: exocortex
+          POSTGRES_PASSWORD: ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://exocortex:ci_password@localhost:5432/exocortex
+      REDIS_URL: redis://localhost:6379/0
+      KEYCLOAK_URL: http://localhost:8080
+      KEYCLOAK_REALM: exocortex
+      KEYCLOAK_CLIENT_ID: exocortex-api
+      OTEL_SERVICE_NAME: exocortex-api
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:4317
+      ENVIRONMENT: test
+      DEBUG: "false"
+      CORS_ORIGINS: '["http://localhost:3000"]'
+      # CI-only Fernet key: 32 zero-bytes base64url-encoded — not used for real secrets in CI
+      EXOCORTEX_SECRET_KEY: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Create test database
+        run: |
+          PGPASSWORD=ci_password psql -h localhost -U exocortex -d exocortex \
+            -c "CREATE DATABASE exocortex_test;"
+
+      - name: Lint — ruff
+        run: ruff check app/ tests/
+
+      - name: Lint — mypy
+        run: mypy app/
+
+      - name: Migrate
+        run: alembic upgrade head
+
+      - name: Verify downgrade/upgrade cycle
+        run: |
+          alembic downgrade -1
+          alembic upgrade head
+
+      - name: Test
+        run: pytest tests/ -v --cov=app --cov-report=xml --cov-fail-under=80
+
+      - name: Upload coverage
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: backend/coverage.xml
+          fail_ci_if_error: false

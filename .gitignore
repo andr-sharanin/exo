@@ -1,0 +1,55 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Type checking
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes (local dev)
+.docker/
+
+# Alembic generated
+backend/alembic/versions/*.py
+!backend/alembic/versions/.gitkeep
+
+# Node (frontend phases)
+node_modules/
+.next/
+out/
+
+# Mobile (phase 11)
+.expo/
+android/
+ios/
+*.apk
+*.ipa

@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "ExoCortex",
+    "slug": "exocortex",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "exocortex",
+    "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f172a"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f172a"
+      },
+      "package": "com.exocortex.app",
+      "permissions": [
+        "NOTIFICATIONS",
+        "RECEIVE_BOOT_COMPLETED"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#6366f1",
+          "sounds": []
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "apiUrl": "http://10.0.2.2:8000/api/v1",
+      "keycloakUrl": "http://10.0.2.2:8080",
+      "eas": {
+        "projectId": "replace-with-your-eas-project-id"
+      }
+    }
+  }
+}
