@@ -15,10 +15,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.accessToken = account.access_token;
         token.idToken = account.id_token;
         token.expiresAt = account.expires_at;
+        // Read roles from ID token (userinfo endpoint excludes roles per mapper config)
+        if (account.id_token) {
+          try {
+            const payload = JSON.parse(atob(account.id_token.split(".")[1]));
+            const flatRoles = payload["roles"] as string[] | undefined;
+            const realmAccess = payload["realm_access"] as { roles?: string[] } | undefined;
+            token.roles = flatRoles ?? realmAccess?.roles ?? [];
+          } catch {
+            token.roles = [];
+          }
+        }
       }
-      // Propagate Keycloak roles — check both flat "roles" claim (our mapper)
-      // and nested "realm_access.roles" (Keycloak default in access tokens)
-      if (profile) {
+      // Fallback: profile from userinfo if available
+      if (!token.roles && profile) {
         const p = profile as Record<string, unknown>;
         const flatRoles = p["roles"] as string[] | undefined;
         const realmAccess = p["realm_access"] as { roles?: string[] } | undefined;
