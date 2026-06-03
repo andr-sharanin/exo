@@ -75,6 +75,9 @@ _DEFAULT_PERSONAS: dict[str, dict] = {
     },
 }
 
+# Public alias used by config_service for seeding default personas
+AGENT_PERSONAS = _DEFAULT_PERSONAS
+
 # Kept for schema validation fallback (updated dynamically from DB)
 DEFAULT_ENTITY_TYPES = frozenset(_DEFAULT_PERSONAS.keys())
 
