@@ -197,6 +197,7 @@ services:
     environment:
       NEXTAUTH_URL: https://${DOMAIN}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      AUTH_TRUST_HOST: "true"
       KEYCLOAK_CLIENT_ID: exocortex-frontend
       KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_FRONTEND_CLIENT_SECRET}
       KEYCLOAK_ISSUER: https://auth.${DOMAIN}/realms/exocortex
