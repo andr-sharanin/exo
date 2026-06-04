@@ -5,7 +5,10 @@
  * Base path: /api/backend  →  FastAPI /api/v1
  */
 
-const BASE = "/api/backend";
+const isServer = typeof window === "undefined";
+const BASE = isServer
+  ? `${process.env.BACKEND_URL ?? "http://api:8000"}/api/v1`
+  : "/api/backend";
 
 export class ApiError extends Error {
   constructor(
