@@ -7,7 +7,12 @@ export default async function AdminSettingsPage() {
   const session = await auth();
   const token = session!.accessToken;
 
-  const entries = await api.config.list(token) as ConfigEntry[];
+  let entries: ConfigEntry[] = [];
+  try {
+    entries = await api.config.list(token) as ConfigEntry[];
+  } catch {
+    entries = [];
+  }
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">

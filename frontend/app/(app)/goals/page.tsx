@@ -8,7 +8,12 @@ const HORIZONS: Horizon[] = ["vision", "annual", "quarterly", "monthly", "weekly
 export default async function GoalsPage() {
   const session = await auth();
   const token = session!.accessToken;
-  const goals = await api.goals.list(token) as PlanningGoal[];
+  let goals: PlanningGoal[] = [];
+  try {
+    goals = await api.goals.list(token) as PlanningGoal[];
+  } catch {
+    goals = [];
+  }
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">

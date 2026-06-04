@@ -27,10 +27,15 @@ export default async function ChatPage({
   const session = await auth();
   const token = session!.accessToken;
 
-  const agentSession = await api.agents.createSession(
-    { entity_type: entityType, session_mode: "advisory" },
-    token
-  ) as AgentSession;
+  let agentSession: AgentSession | null = null;
+  try {
+    agentSession = await api.agents.createSession(
+      { entity_type: entityType, session_mode: "advisory" },
+      token
+    ) as AgentSession;
+  } catch {
+    notFound();
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -40,7 +45,7 @@ export default async function ChatPage({
         </h1>
         <p className="text-xs text-gray-500">Advisory session</p>
       </div>
-      <ChatWindow session={agentSession} token={token} />
+      <ChatWindow session={agentSession!} token={token} />
     </div>
   );
 }
